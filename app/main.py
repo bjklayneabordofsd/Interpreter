@@ -44,6 +44,18 @@ def main():
             print(f'LEFT_BRACE {{ null')
         if c == "}":
             print(f'RIGHT_BRACE }} null')
+        if c == "*":
+            print(f'STAR * null')
+        if c == ".":
+            print(f'DOT . null')
+        if c == ",":
+            print(f'COMMA , null')
+        if c == "+":
+            print(f'PLUS + null')
+        if c == "-":
+            print(f'MINUS - null')
+        if c == ";":
+            print(f'SEMICOLON ; null')
     print("EOF  null")
 
 
