@@ -40,6 +40,10 @@ def main():
             print(f'LEFT_PAREN ( null')
         if c == ")":
             print(f'RIGHT_PAREN ) null')
+        if c == "{":
+            print(f'LEFT_BRACE {{ null')
+        if c == "}":
+            print(f'RIGHT_BRACE }} null')
     print("EOF  null")
 
 
