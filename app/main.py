@@ -28,12 +28,20 @@ def main():
         file_contents = file.read()
 
     # Open the specified file and read its contents into 'file_contents'.
-    if file_contents:
-        raise NotImplementedError("Scanner not implemented")
-    else:
+    # if file_contents:
+    #     raise NotImplementedError("Scanner not implemented")
+    # else:
         # If the file is empty, print a placeholder message indicating EOF (End Of File).
         # This line should be removed once the scanner is fully implemented.
-        print("EOF  null")
+        # print("EOF  null")
+
+    for c in file_contents:
+        if c == "(":
+            print(f'LEFT_PAREN ( null')
+        if c == ")":
+            print(f'RIGHT_PAREN ) null')
+    print("EOF  null")
+
 
 
 if __name__ == "__main__":
