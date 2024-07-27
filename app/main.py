@@ -56,6 +56,10 @@ def main():
             print(f'MINUS - null')
         if c == ";":
             print(f'SEMICOLON ; null')
+        if c == "$":
+            print(f'[line 1] Error: Unexpected character: $')
+        if c == "#":
+            print(f'[line 1] Error: Unexpected character: #')
     print("EOF  null")
 
 
