@@ -46,15 +46,19 @@ def main():
         "+" : 'PLUS + null',
         "-" : 'MINUS - null',
         ";" : 'SEMICOLON ; null',
-
+        "x" : 'EQUAL_EQUAL == null',
+        "=" : "EQUAL = null",
+        "b" : 'BANG_EQUAL != null',
+        "!" : 'BANG ! null',
     }
 
     error = False
     line_count = 1
     for line in file_lines:
-        for c in line.strip():
-            if c == interpreter_dict.get(str(c)):
-                print(interpreter_dict)
+        line_list = line.replace('!=', 'b').replace('==', 'x')
+        for c in line_list.strip():
+            if c in interpreter_dict:
+                print(interpreter_dict.get(c))
             else:
                 error = True
                 print(f'[line {line_count}] Error: Unexpected character: {c}', file=sys.stderr,)
