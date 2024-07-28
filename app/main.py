@@ -25,7 +25,7 @@ def main():
         exit(1)
 
     with open(filename) as file:
-        file_contents = file.read()
+        file_lines = file.readlines()
 
     # Open the specified file and read its contents into 'file_contents'.
     # if file_contents:
@@ -35,33 +35,36 @@ def main():
         # This line should be removed once the scanner is fully implemented.
         # print("EOF  null")
 
-    for c in file_contents:
-        if c == "(":
-            print(f'LEFT_PAREN ( null')
-        if c == ")":
-            print(f'RIGHT_PAREN ) null')
-        if c == "{":
-            print(f'LEFT_BRACE {{ null')
-        if c == "}":
-            print(f'RIGHT_BRACE }} null')
-        if c == "*":
-            print(f'STAR * null')
-        if c == ".":
-            print(f'DOT . null')
-        if c == ",":
-            print(f'COMMA , null')
-        if c == "+":
-            print(f'PLUS + null')
-        if c == "-":
-            print(f'MINUS - null')
-        if c == ";":
-            print(f'SEMICOLON ; null')
-        if c == "$":
-            print(f'[line 1] Error: Unexpected character: $')
-        if c == "#":
-            print(f'[line 1] Error: Unexpected character: #')
+    interpreter_dict = {
+        "(" : 'LEFT_PAREN ( null',
+        ")" : 'RIGHT_PAREN ) null',
+        "{" : 'LEFT_BRACE { null',
+        "}" : 'RIGHT_BRACE } null',
+        "*" : 'STAR * null',
+        "." : 'DOT . null',
+        "," : 'COMMA , null',
+        "+" : 'PLUS + null',
+        "-" : 'MINUS - null',
+        ";" : 'SEMICOLON ; null',
+
+    }
+
+    error = False
+    line_count = 1
+    for line in file_lines:
+        for c in line.strip():
+            if c == interpreter_dict.get(str(c)):
+                print(interpreter_dict)
+            else:
+                error = True
+                print(f'[line {line_count}] Error: Unexpected character: {c}', file=sys.stderr,)
+        line_count += 1
     print("EOF  null")
 
+    if error:
+        exit(65)
+    else:
+        exit(0)
 
 
 if __name__ == "__main__":
