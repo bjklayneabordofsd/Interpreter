@@ -50,12 +50,16 @@ def main():
         "=" : "EQUAL = null",
         "b" : 'BANG_EQUAL != null',
         "!" : 'BANG ! null',
+        "g" : 'GREATER_EQUAL >= null',
+        ">" : 'GREATER > null',
+        "l" : 'LESS_EQUAL <= null',
+        "<" : 'LESS < null',
     }
 
     error = False
     line_count = 1
     for line in file_lines:
-        line_list = line.replace('!=', 'b').replace('==', 'x')
+        line_list = line.replace('!=', 'b').replace('>=', 'g').replace('<=', 'l').replace('==', 'x')
         for c in line_list.strip():
             if c in interpreter_dict:
                 print(interpreter_dict.get(c))
