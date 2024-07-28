@@ -54,15 +54,18 @@ def main():
         ">" : 'GREATER > null',
         "l" : 'LESS_EQUAL <= null',
         "<" : 'LESS < null',
+        "/" : 'SLASH / null', 
     }
 
     error = False
     line_count = 1
     for line in file_lines:
-        line_list = line.replace('!=', 'b').replace('>=', 'g').replace('<=', 'l').replace('==', 'x')
+        line_list = line.replace('!=', 'b').replace('>=', 'g').replace('<=', 'l').replace('==', 'x').replace('//', 'c')
         for c in line_list.strip():
             if c in interpreter_dict:
                 print(interpreter_dict.get(c))
+            elif c == "c":
+                break
             else:
                 error = True
                 print(f'[line {line_count}] Error: Unexpected character: {c}', file=sys.stderr,)
