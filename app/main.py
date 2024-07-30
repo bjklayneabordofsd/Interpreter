@@ -64,7 +64,7 @@ def main():
         for c in line_list.strip():
             if c in interpreter_dict:
                 print(interpreter_dict.get(c))
-            elif c == "s" or c == " ":
+            elif c == "s" or c == " " or c == "\t":
                 pass
             elif c == "c":
                 break
