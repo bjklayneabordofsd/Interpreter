@@ -54,16 +54,18 @@ def main():
         ">" : 'GREATER > null',
         "l" : 'LESS_EQUAL <= null',
         "<" : 'LESS < null',
-        "/" : 'SLASH / null', 
+        "/" : 'SLASH / null',
     }
 
     error = False
     line_count = 1
     for line in file_lines:
-        line_list = line.replace('!=', 'b').replace('>=', 'g').replace('<=', 'l').replace('==', 'x').replace('//', 'c')
+        line_list = line.replace('!=', 'b').replace('>=', 'g').replace('<=', 'l').replace('==', 'x').replace('//', 'c').replace('<|TAB|>', 's').replace('<|SPACE|>', 's')
         for c in line_list.strip():
             if c in interpreter_dict:
                 print(interpreter_dict.get(c))
+            elif c == "s" or c == " ":
+                pass
             elif c == "c":
                 break
             else:
