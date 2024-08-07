@@ -1,25 +1,100 @@
 import sys
 
+def string_to_list(line_list):
+    for i in range(len(line_list)):
+        if line_list[i] == "[//]":
+            line_list[i] = line_list[i].replace('[//]', "[c]")
+        elif line_list[i] == '["]':
+            line_list[i] = line_list[i].replace('["]', "[u]")
+
+    for i in range(len(line_list)):
+        line_list[i] = line_list[i].replace("[", "")
+        line_list[i] = line_list[i].replace("]", "")
+
+    return line_list
+
+def encaps_single_tokens(line):
+    new_string = ""
+    ignore = False
+    for i in range(len(line)):
+        if ignore == True:
+            if line[i] == "]":
+                new_string += line[i]
+                ignore = False
+            else:
+                new_string += line[i]
+        elif line[i] == "[":
+            new_string += line[i]
+            ignore = True
+        else:
+            new_string += f"[{line[i]}]"
+
+    new_string = new_string.replace('][', "]][[")
+
+    line_list = list(new_string.split(']['))
+
+    return string_to_list(line_list)
+
+# encapsulates all multiple tokens
+def encaps_multiple_tokens(line):
+    multiple_token = [ 
+        "!=",
+        ">=", 
+        "<=",
+        "==",
+        "//",
+    ]
+
+    for token in multiple_token:
+        line = line.replace(token, f"[{token}]")
+    
+    line = line.replace("[[", "[")
+    line = line.replace("]]", "]")
+    
+    return line
+
+#encapsulate all strings ("") in a bracket ([])
+def encaps_string(line):
+    #get coordinates of strings
+    position_list = [i for i in range(len(line)) if line.startswith("\"", i)]
+    string_list = []
+
+    #store strings in string_list
+    if len(position_list) > 1:
+        for i in range(0, (len(position_list)//2) * 2, 2):
+            string_list.append(line[position_list[i]:position_list[i+1]+1])
+    else:
+        pass
+    
+    #puting brackets into string using replace
+    for i in range(len(string_list)):
+        line = line.replace(string_list[i], f"[]")
+    
+    #putting brackets into multiple tokens 
+    if len(string_list) == 0:
+        line = encaps_multiple_tokens(line)
+    else:
+        for string in string_list:
+            place = encaps_multiple_tokens(line).find("[]") + 1
+            line = encaps_multiple_tokens(line)
+            line = line[:place] + f"{string}" + line[place:]
+
+    #putting brackets into single tokens
+    line = encaps_single_tokens(line)
+
+    return line
 
 def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!", file=sys.stderr)
 
-    # Check if the correct number of arguments have been passed.
-    # If not, print usage instructions and exit the program.
     if len(sys.argv) < 3:
         print("Usage: ./your_program.sh tokenize <filename>", file=sys.stderr)
         exit(1)
 
-    # Assign the first argument (after script name) to 'command'.
-    # This should be the operation to perform, e.g., "tokenize".
     command = sys.argv[1]
-
-    # Assign the second argument to 'filename', which is expected to be the file to process.
     filename = sys.argv[2]
 
-    # Check if the specified command matches the expected operation ("tokenize").
-    # If not, print an error message and exit the program.
     if command != "tokenize":
         print(f"Unknown command: {command}", file=sys.stderr)
         exit(1)
@@ -27,50 +102,56 @@ def main():
     with open(filename) as file:
         file_lines = file.readlines()
 
-    # Open the specified file and read its contents into 'file_contents'.
     # if file_contents:
     #     raise NotImplementedError("Scanner not implemented")
     # else:
-        # If the file is empty, print a placeholder message indicating EOF (End Of File).
-        # This line should be removed once the scanner is fully implemented.
-        # print("EOF  null")
+    #     print("EOF  null") # Placeholder, remove this line when implementing the scanner
 
     interpreter_dict = {
-        "(" : 'LEFT_PAREN ( null',
-        ")" : 'RIGHT_PAREN ) null',
-        "{" : 'LEFT_BRACE { null',
-        "}" : 'RIGHT_BRACE } null',
-        "*" : 'STAR * null',
-        "." : 'DOT . null',
-        "," : 'COMMA , null',
-        "+" : 'PLUS + null',
-        "-" : 'MINUS - null',
-        ";" : 'SEMICOLON ; null',
-        "x" : 'EQUAL_EQUAL == null',
-        "=" : "EQUAL = null",
-        "b" : 'BANG_EQUAL != null',
-        "!" : 'BANG ! null',
-        "g" : 'GREATER_EQUAL >= null',
-        ">" : 'GREATER > null',
-        "l" : 'LESS_EQUAL <= null',
-        "<" : 'LESS < null',
-        "/" : 'SLASH / null',
+        "(" : 'LEFT_PAREN',
+        ")" : 'RIGHT_PAREN',
+        "{" : 'LEFT_BRACE',
+        "}" : 'RIGHT_BRACE',
+        "*" : 'STAR',
+        "." : 'DOT',
+        "," : 'COMMA',
+        "+" : 'PLUS',
+        "-" : 'MINUS',
+        ";" : 'SEMICOLON',
+        "==" : 'EQUAL_EQUAL',
+        "=" : "EQUAL",
+        "!=" : 'BANG_EQUAL',
+        "!" : 'BANG',
+        ">=" : 'GREATER_EQUAL',
+        ">" : 'GREATER',
+        "<=" : 'LESS_EQUAL',
+        "<" : 'LESS',
+        "/" : 'SLASH',
     }
+
 
     error = False
     line_count = 1
     for line in file_lines:
-        line_list = line.replace('!=', 'b').replace('>=', 'g').replace('<=', 'l').replace('==', 'x').replace('//', 'c').replace('<|TAB|>', 's').replace('<|SPACE|>', 's')
-        for c in line_list.strip():
-            if c in interpreter_dict:
-                print(interpreter_dict.get(c))
-            elif c == "s" or c == " " or c == "\t":
-                pass
-            elif c == "c":
+        line = line.replace("<|TAB|>", "\t")
+        line = line.replace("<|SPACE|>", " ")
+        for token in encaps_string(line):
+            if token == "c":
                 break
+            elif token in interpreter_dict:
+                print(f"{interpreter_dict.get(token)} {token} null")
+            elif token.startswith('"'):
+                token = token.replace('"', "")
+                print(f"STRING \"{token}\" {token}")
+            elif token == "u":
+                error = True
+                print(f'[line {line_count}] Error: Unterminated string.', file=sys.stderr,)
+                break
+            elif token == "\t" or token == " " or token == "\n" or token == "\r" or token == "\0" or token == '':
+                continue
             else:
                 error = True
-                print(f'[line {line_count}] Error: Unexpected character: {c}', file=sys.stderr,)
+                print(f'[line {line_count}] Error: Unexpected character: {token}', file=sys.stderr,)
         line_count += 1
     print("EOF  null")
 
@@ -78,7 +159,7 @@ def main():
         exit(65)
     else:
         exit(0)
-
+    
 
 if __name__ == "__main__":
     main()
